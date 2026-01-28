@@ -699,14 +699,13 @@ st.set_page_config(
 st.markdown("""
 <div class="header-container">
     <div class="header-title">
-        <div class="header-icon">🔷</div>
         <div class="header-text">
             <h1>Product Catalog Scraper</h1>
-            <p>🤖 AI-powered data extraction</p>
+            <p>AI-powered data extraction</p>
         </div>
     </div>
     <div class="backend-status">
-        <span class="status-dot"></span>
+        <span class="status-dot" style="background-color: #28a745;"></span>
         Backend Online
     </div>
 </div>
