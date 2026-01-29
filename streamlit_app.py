@@ -789,31 +789,10 @@ with st.sidebar:
         max_depth = st.slider("Max Depth", 1, 5, 3)
         delay = st.slider("Delay", 0.1, 5.0, 0.5, 0.1, format="%.1fs")
 
-        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">📄 Export Formats</div>', unsafe_allow_html=True)
-        
-        export_format_options = {
-            "JSON": "json",
-            "CSV": "csv",
-            "Prices CSV": "csv_prices",
-            "Quotation": "quotation"
-        }
-        
-        selected_formats = []
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            if st.checkbox("JSON", value=True):
-                selected_formats.append("json")
-            if st.checkbox("Prices CSV", value=False):
-                selected_formats.append("csv_prices")
-        
-        with col2:
-            if st.checkbox("CSV", value=True):
-                selected_formats.append("csv")
-            if st.checkbox("Quotation", value=False):
-                selected_formats.append("quotation")
-        
-        export_formats = selected_formats
+        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">📄 Export Format</div>', unsafe_allow_html=True)
+        st.caption("JSON export is enabled by default")
+
+        export_formats = ["json"]
 
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">📊 Google Sheets</div>', unsafe_allow_html=True)
         
