@@ -797,7 +797,7 @@ with st.sidebar:
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">📊 Google Sheets</div>', unsafe_allow_html=True)
         
         if google_sheets_available:
-            enable_sheets = st.toggle("Enable Google Sheets Upload", value=False)
+            enable_sheets = st.toggle("Enable Google Sheets Upload", value=True)
             if enable_sheets:
                 st.caption("Results will be exported to your connected Google Sheet")
             sheets_id = None
