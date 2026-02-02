@@ -739,9 +739,6 @@ def get_backend_features(api_base: str):
         pass
     return {"available": False, "google_sheets": {"enabled": False}}
 
-backend_features = get_backend_features(st.session_state.backend_url)
-google_sheets_available = backend_features.get("google_sheets", {}).get("enabled", False)
-
 # -----------------------------
 # Initialize Session State
 # -----------------------------
@@ -760,43 +757,6 @@ if 'poll_count' not in st.session_state:
 # Sidebar – Scraper Settings
 # -----------------------------
 with st.sidebar:
-    # Backend Selection (outside form)
-    st.markdown('<div class="sidebar-section-header">⚙️ Backend Selection</div>', unsafe_allow_html=True)
-    
-    # Determine current index
-    current_index = 0
-    for idx, (key, url) in enumerate(BACKEND_OPTIONS.items()):
-        if url == st.session_state.backend_url:
-            current_index = idx
-            break
-    
-    selected_backend = st.selectbox(
-        "Backend",
-        options=list(BACKEND_OPTIONS.keys()),
-        index=current_index,
-        label_visibility="collapsed",
-        help="HF Spaces: Original backend\nLAM Sales: LAM-specific backend\nLocal: localhost:7860"
-    )
-    
-    # Update backend URL if changed
-    new_backend_url = BACKEND_OPTIONS[selected_backend]
-    if new_backend_url != st.session_state.backend_url:
-        st.session_state.backend_url = new_backend_url
-        # Clear cache when switching backends
-        get_backend_features.clear()
-        st.rerun()
-    
-    # Show backend status
-    backend_status = backend_features.get("available", False)
-    if backend_status:
-        st.success(f"✅ Connected to {selected_backend}")
-    else:
-        st.error(f"❌ Cannot connect to {selected_backend}")
-        if selected_backend == "Local":
-            st.caption("Make sure the backend is running: `uvicorn app:app --reload`")
-    
-    st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
-    
     with st.form("scraper_form"):
         st.markdown('<div class="sidebar-section-header">🌐 Website URL</div>', unsafe_allow_html=True)
         url = st.text_input(
@@ -815,19 +775,62 @@ with st.sidebar:
         model_display = st.radio(
             "Scraping Model",
             options=list(model_options.keys()),
-            index=0,
+            index=0 if st.session_state.selected_model == "LAM" else 1,
             label_visibility="collapsed",
             help="LAM: Uses Gemini AI to identify configurators and Playwright for interactive extraction\nS: Static extraction only, no AI assistance"
         )
         model = model_options[model_display]
+        st.session_state.selected_model = model
         
-        # Auto-suggest LAM Sales backend when LAM model is selected
-        if model == "LAM" and st.session_state.selected_model != "LAM":
-            st.session_state.selected_model = "LAM"
-            if st.session_state.backend_url != BACKEND_OPTIONS["LAM Sales"]:
-                st.info("💡 Tip: Consider using 'LAM Sales' backend for optimal LAM model performance")
-        elif model != "LAM":
-            st.session_state.selected_model = model
+        # Backend Selection (inside form, conditional based on model)
+        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">⚙️ Backend Selection</div>', unsafe_allow_html=True)
+        
+        # Filter backend options based on selected model
+        if model == "LAM":
+            # Only show LAM Sales and Local for LAM model
+            available_backends = {k: v for k, v in BACKEND_OPTIONS.items() if k in ["LAM Sales", "Local"]}
+            # Auto-select LAM Sales if currently on HF Spaces
+            if st.session_state.backend_url == BACKEND_OPTIONS["HF Spaces"]:
+                st.session_state.backend_url = BACKEND_OPTIONS["LAM Sales"]
+        else:
+            # Show HF Spaces and Local for S model (not LAM Sales)
+            available_backends = {k: v for k, v in BACKEND_OPTIONS.items() if k in ["HF Spaces", "Local"]}
+            # Auto-select HF Spaces if currently on LAM Sales
+            if st.session_state.backend_url == BACKEND_OPTIONS["LAM Sales"]:
+                st.session_state.backend_url = BACKEND_OPTIONS["HF Spaces"]
+        
+        # Determine current index for the filtered list
+        current_index = 0
+        for idx, (key, url) in enumerate(available_backends.items()):
+            if url == st.session_state.backend_url:
+                current_index = idx
+                break
+        
+        selected_backend = st.selectbox(
+            "Backend",
+            options=list(available_backends.keys()),
+            index=current_index,
+            label_visibility="collapsed",
+            help="LAM Sales: Optimized for LAM model\nHF Spaces: For static scraping\nLocal: localhost:7860"
+        )
+        
+        # Update backend URL
+        new_backend_url = available_backends[selected_backend]
+        if new_backend_url != st.session_state.backend_url:
+            st.session_state.backend_url = new_backend_url
+            # Clear cache when switching backends
+            get_backend_features.clear()
+        
+        # Show backend status
+        backend_status = get_backend_features(st.session_state.backend_url).get("available", False)
+        if backend_status:
+            st.success(f"✅ Connected to {selected_backend}")
+        else:
+            st.warning(f"⚠️ Cannot connect to {selected_backend}")
+            if selected_backend == "Local":
+                st.caption("Make sure the backend is running: `uvicorn app:app --reload`")
+        
+        st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
         
         # Description based on selection
         model_descriptions = {
@@ -873,6 +876,10 @@ with st.sidebar:
         export_formats = ["json"]
 
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">📊 Google Sheets</div>', unsafe_allow_html=True)
+        
+        # Get google sheets availability from current backend
+        backend_features = get_backend_features(st.session_state.backend_url)
+        google_sheets_available = backend_features.get("google_sheets", {}).get("enabled", False)
         
         if google_sheets_available:
             enable_sheets = st.toggle("Enable Google Sheets Upload", value=True)
