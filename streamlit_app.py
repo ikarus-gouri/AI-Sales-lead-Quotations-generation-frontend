@@ -712,24 +712,34 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------
-# Hosted Backend Configuration
+# Backend Configuration
 # -----------------------------
-HF_API_BASE = "https://gouriikarus3d-product-catalogue-ai.hf.space"
+BACKEND_OPTIONS = {
+    "HF Spaces": "https://gouriikarus3d-product-catalogue-ai.hf.space",
+    "LAM Sales": "https://gouriikarus3d-lam-sales.hf.space",
+    "Local": "http://localhost:7860"
+}
+
+# Initialize backend selection in session state
+if 'backend_url' not in st.session_state:
+    st.session_state.backend_url = BACKEND_OPTIONS["HF Spaces"]
+if 'selected_model' not in st.session_state:
+    st.session_state.selected_model = "LAM"
 
 # -----------------------------
 # Backend Feature Detection
 # -----------------------------
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=60)  # Reduced TTL for faster backend switching
 def get_backend_features(api_base: str):
     try:
         r = requests.get(f"{api_base}/features", timeout=5)
         if r.status_code == 200:
-            return r.json()
+            return {"available": True, **r.json()}
     except:
         pass
-    return {"google_sheets": {"enabled": False}}
+    return {"available": False, "google_sheets": {"enabled": False}}
 
-backend_features = get_backend_features(HF_API_BASE)
+backend_features = get_backend_features(st.session_state.backend_url)
 google_sheets_available = backend_features.get("google_sheets", {}).get("enabled", False)
 
 # -----------------------------
@@ -750,6 +760,43 @@ if 'poll_count' not in st.session_state:
 # Sidebar – Scraper Settings
 # -----------------------------
 with st.sidebar:
+    # Backend Selection (outside form)
+    st.markdown('<div class="sidebar-section-header">⚙️ Backend Selection</div>', unsafe_allow_html=True)
+    
+    # Determine current index
+    current_index = 0
+    for idx, (key, url) in enumerate(BACKEND_OPTIONS.items()):
+        if url == st.session_state.backend_url:
+            current_index = idx
+            break
+    
+    selected_backend = st.selectbox(
+        "Backend",
+        options=list(BACKEND_OPTIONS.keys()),
+        index=current_index,
+        label_visibility="collapsed",
+        help="HF Spaces: Original backend\nLAM Sales: LAM-specific backend\nLocal: localhost:7860"
+    )
+    
+    # Update backend URL if changed
+    new_backend_url = BACKEND_OPTIONS[selected_backend]
+    if new_backend_url != st.session_state.backend_url:
+        st.session_state.backend_url = new_backend_url
+        # Clear cache when switching backends
+        get_backend_features.clear()
+        st.rerun()
+    
+    # Show backend status
+    backend_status = backend_features.get("available", False)
+    if backend_status:
+        st.success(f"✅ Connected to {selected_backend}")
+    else:
+        st.error(f"❌ Cannot connect to {selected_backend}")
+        if selected_backend == "Local":
+            st.caption("Make sure the backend is running: `uvicorn app:app --reload`")
+    
+    st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
+    
     with st.form("scraper_form"):
         st.markdown('<div class="sidebar-section-header">🌐 Website URL</div>', unsafe_allow_html=True)
         url = st.text_input(
@@ -757,6 +804,37 @@ with st.sidebar:
             placeholder="https://example.com/products",
             label_visibility="collapsed"
         )
+
+        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">🤖 Model Selection</div>', unsafe_allow_html=True)
+        
+        model_options = {
+            "LAM (Gemini + Playwright)": "LAM",
+            "S (Static Only)": "S"
+        }
+        
+        model_display = st.radio(
+            "Scraping Model",
+            options=list(model_options.keys()),
+            index=0,
+            label_visibility="collapsed",
+            help="LAM: Uses Gemini AI to identify configurators and Playwright for interactive extraction\nS: Static extraction only, no AI assistance"
+        )
+        model = model_options[model_display]
+        
+        # Auto-suggest LAM Sales backend when LAM model is selected
+        if model == "LAM" and st.session_state.selected_model != "LAM":
+            st.session_state.selected_model = "LAM"
+            if st.session_state.backend_url != BACKEND_OPTIONS["LAM Sales"]:
+                st.info("💡 Tip: Consider using 'LAM Sales' backend for optimal LAM model performance")
+        elif model != "LAM":
+            st.session_state.selected_model = model
+        
+        # Description based on selection
+        model_descriptions = {
+            "LAM (Gemini + Playwright)": "🎯 AI-powered: Identifies product pages → Detects configurators with Gemini → Interactive extraction with Playwright",
+            "S (Static Only)": "📄 Classic approach: Crawls pages and extracts data from HTML"
+        }
+        st.info(model_descriptions[model_display])
 
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">🎯 Scraping Strictness</div>', unsafe_allow_html=True)
         
@@ -882,6 +960,12 @@ if not st.session_state.scraping_started:
                 Configure your scraping parameters in the sidebar and click "Start Scraping" 
                 to extract structured product data from any e-commerce website.
             </p>
+            <p style='color: #3b82f6; font-size: 0.9rem; line-height: 1.5; margin-top: 1rem;'>
+                <strong>🤖 LAM Model Workflow:</strong><br/>
+                1️⃣ Identify all product pages<br/>
+                2️⃣ Gemini detects configurators<br/>
+                3️⃣ Playwright + Gemini interactive extraction
+            </p>
             """, unsafe_allow_html=True)
             
             st.markdown("""
@@ -910,7 +994,7 @@ if run_button:
     st.session_state.scraping_started = True
     main_content.empty()
     
-    api = HFAPIClient(HF_API_BASE)
+    api = HFAPIClient(st.session_state.backend_url)
 
     with st.spinner("Checking backend availability..."):
         try:
@@ -926,6 +1010,7 @@ if run_button:
         "crawl_delay": delay,
         "export_formats": export_formats,
         "strictness": strictness,
+        "model": model,
         "google_sheets_upload": enable_sheets,
         "google_sheets_id": sheets_id
     }
@@ -949,7 +1034,7 @@ if run_button:
 # Job Status Polling (Non-blocking)
 # -----------------------------
 if st.session_state.scraping_started and st.session_state.job_id:
-    api = HFAPIClient(HF_API_BASE)
+    api = HFAPIClient(st.session_state.backend_url)
     
     # Poll the backend for current status
     try:
@@ -965,7 +1050,13 @@ if st.session_state.scraping_started and st.session_state.job_id:
             st.session_state.progress_pct = 5
         elif status == "running":
             # Try to extract progress from message
-            if "Crawling" in message or "Discovering" in message:
+            if "Identifying" in message or "Step 1" in message:
+                # LAM Step 1: Identifying product pages: 10-30%
+                st.session_state.progress_pct = min(max(st.session_state.progress_pct + 2, 10), 30)
+            elif "Detecting Configurators" in message or "Step 2" in message or "Gemini" in message:
+                # LAM Step 2: Gemini configurator detection: 30-40%
+                st.session_state.progress_pct = min(max(st.session_state.progress_pct + 2, 30), 40)
+            elif "Crawling" in message or "Discovering" in message:
                 # Crawling phase: 10-40%
                 try:
                     if "[" in message and "/" in message:
@@ -979,7 +1070,10 @@ if st.session_state.scraping_started and st.session_state.job_id:
                         st.session_state.progress_pct = min(st.session_state.progress_pct + 2, 40)
                 except:
                     st.session_state.progress_pct = min(st.session_state.progress_pct + 2, 40)
-            elif "Scraping product" in message or "Product Summary" in message:
+            elif "Playwright" in message or "Interactive" in message or "ITERATION" in message:
+                # LAM Step 3: Interactive extraction: 40-65%
+                st.session_state.progress_pct = min(max(st.session_state.progress_pct + 1, 40), 65)
+            elif "Scraping product" in message or "Product Summary" in message or "Extracting" in message:
                 # Scraping phase: 40-70%
                 st.session_state.progress_pct = min(max(st.session_state.progress_pct + 1, 40), 70)
             elif "Uploading" in message or "Google Sheets" in message:
@@ -1131,7 +1225,7 @@ if st.session_state.scraping_started and st.session_state.job_id:
             # Job still in progress - check timeout
             if st.session_state.poll_count < 300:
                 # Wait 2 seconds and rerun
-                time.sleep(2)
+                time.sleep(200)
                 st.rerun()
             else:
                 st.error("⏱️ Job polling timeout. The job may still be running on the backend.")
