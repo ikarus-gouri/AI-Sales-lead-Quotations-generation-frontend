@@ -865,6 +865,7 @@ with st.sidebar:
             enable_sheets = st.toggle("Enable Google Sheets Upload", value=True)
             if enable_sheets:
                 st.caption("Results will be exported to your connected Google Sheet")
+                st.markdown("[📊 Open Google Sheet](https://docs.google.com/spreadsheets/d/1SrD1nYSuHEIF8i8n8Xs3mg3f8KviYgm0TbYC1AbhquQ/edit?gid=0#gid=0)")
             sheets_id = None
         else:
             enable_sheets = False
@@ -1147,6 +1148,11 @@ if st.session_state.scraping_started and st.session_state.job_id:
             # Results Section Header
             st.markdown("### 📥 Results Ready")
             st.caption(f"{len(files)} file(s) available for download")
+            
+            # Show Google Sheets link if enabled
+            if enable_sheets:
+                st.markdown("[📊 View in Google Sheets](https://docs.google.com/spreadsheets/d/1SrD1nYSuHEIF8i8n8Xs3mg3f8KviYgm0TbYC1AbhquQ/edit?gid=0#gid=0)")
+                st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
 
             # Download Files
             format_meta = {
