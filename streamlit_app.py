@@ -717,7 +717,7 @@ st.markdown("""
 BACKEND_OPTIONS = {
     "Local": "http://localhost:7860",
     "LAM Sales": "https://gouriikarus3d-lam-sales.hf.space",
-    "Product Catalogue AI": "https://gouriikarus3d-product-catalogue-ai.hf.space"
+    # "Product Catalogue AI": "https://gouriikarus3d-product-catalogue-ai.hf.space"
 }
 
 # -----------------------------
@@ -763,14 +763,14 @@ with st.sidebar:
 
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">⚙️ Backend Selection</div>', unsafe_allow_html=True)
         
-        # Determine current index for the selectbox
+        # Determine current index for the radio button
         current_index = 0
         for idx, (key, url_val) in enumerate(BACKEND_OPTIONS.items()):
             if url_val == st.session_state.backend_url:
                 current_index = idx
                 break
         
-        selected_backend = st.selectbox(
+        selected_backend = st.radio(
             "Backend",
             options=list(BACKEND_OPTIONS.keys()),
             index=current_index,
