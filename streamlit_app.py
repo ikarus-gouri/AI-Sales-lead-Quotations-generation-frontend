@@ -747,7 +747,7 @@ if 'progress_pct' not in st.session_state:
 if 'poll_count' not in st.session_state:
     st.session_state.poll_count = 0
 if 'backend_url' not in st.session_state:
-    st.session_state.backend_url = BACKEND_OPTIONS["Local"]
+    st.session_state.backend_url = BACKEND_OPTIONS["LAM Sales"]
 
 # -----------------------------
 # Sidebar – Scraper Settings
@@ -1197,7 +1197,7 @@ if st.session_state.scraping_started and st.session_state.job_id:
             # Job still in progress - check timeout
             if st.session_state.poll_count < 300:
                 # Wait 2 seconds and rerun
-                time.sleep(200)
+                time.sleep(2)
                 st.rerun()
             else:
                 st.error("⏱️ Job polling timeout. The job may still be running on the backend.")
