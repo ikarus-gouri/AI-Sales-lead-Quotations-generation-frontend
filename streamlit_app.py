@@ -800,28 +800,98 @@ with st.sidebar:
         # Get google sheets availability from current backend
         google_sheets_available = backend_features.get("google_sheets", {}).get("enabled", False)
 
-        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">🤖 Model Selection</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">🔍 Crawler Selection</div>', unsafe_allow_html=True)
         
-        model_options = {
-            "LAM (Gemini + Playwright)": "LAM",
-            "S (Static Only)": "S"
+        crawler_options = {
+            "Web Crawler": "web",
+            "AI Crawler (Legacy)": "ai",
+            "Unified Crawler (Recommended)": "unified"
         }
         
-        model_display = st.radio(
-            "Scraping Model",
-            options=list(model_options.keys()),
-            index=1,  # Default to Static
+        crawler_display = st.radio(
+            "Crawler Type",
+            options=list(crawler_options.keys()),
+            index=2,  # Default to Unified
             label_visibility="collapsed",
-            help="LAM: Uses Gemini AI to identify configurators and Playwright for interactive extraction\nS: Static extraction only, faster and works on all sites"
+            help="Web: Traditional crawling with classification\nAI: Legacy Gemini-powered crawler\nUnified: Discover + AI filter (recommended)"
         )
-        model = model_options[model_display]
+        crawler = crawler_options[crawler_display]
         
-        # Description based on selection
-        model_descriptions = {
-            "LAM (Gemini + Playwright)": "🎯 AI-powered: Identifies product pages → Detects configurators with Gemini → Interactive extraction with Playwright",
-            "S (Static Only)": "📄 Classic approach: Crawls pages and extracts data from HTML"
+        # Crawler descriptions
+        crawler_descriptions = {
+            "Web Crawler": "🌐 Traditional: Crawls pages and classifies using rule-based signals (fast, reliable for standard sites)",
+            "AI Crawler (Legacy)": "🤖 Legacy AI: Uses Jina + Gemini for page classification (requires Jina API)",
+            "Unified Crawler (Recommended)": "✨ Best Choice: Discovers all URLs then uses Gemini to filter by intent (no Jina required, more reliable)"
         }
-        st.info(model_descriptions[model_display])
+        st.info(crawler_descriptions[crawler_display])
+        
+        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">⚙️ Scraper Selection</div>', unsafe_allow_html=True)
+        
+        scraper_options = {
+            "Static (HTML Parsing)": "static",
+            "LAM (Gemini + Playwright)": "lam",
+            "AI (AI Extraction)": "ai"
+        }
+        
+        scraper_display = st.radio(
+            "Scraper Type",
+            options=list(scraper_options.keys()),
+            index=0,  # Default to Static
+            label_visibility="collapsed",
+            help="Static: Fast HTML parsing\nLAM: Gemini-guided interactive extraction for configurators\nAI: AI-powered semantic extraction"
+        )
+        scraper = scraper_options[scraper_display]
+        
+        # Scraper descriptions
+        scraper_descriptions = {
+            "Static (HTML Parsing)": "⚡ Fast: Extracts data from HTML using Jina AI (works on most sites)",
+            "LAM (Gemini + Playwright)": "🎯 Interactive: Uses Gemini + Playwright to navigate configurators and extract variants",
+            "AI (AI Extraction)": "🧠 Semantic: AI-powered extraction with deep content understanding"
+        }
+        st.info(scraper_descriptions[scraper_display])
+        
+        # Force AI option (only for LAM scraper)
+        force_ai = False
+        if scraper == "lam":
+            force_ai = st.checkbox(
+                "Force AI Extraction",
+                value=False,
+                help="Force Gemini AI extraction even for static sites (no fallback to static extraction)"
+            )
+            if force_ai:
+                st.caption("⚡ AI-only mode: No fallback to static extraction")
+        
+        # User Intent (REQUIRED for AI/unified crawler, optional for LAM/AI scraper)
+        user_intent = None
+        intent_required = crawler in ["ai", "unified"]
+        intent_recommended = scraper in ["lam", "ai"]
+        
+        if intent_required or intent_recommended:
+            intent_label = "🎯 Extraction Intent" + (" (Required)" if intent_required else " (Recommended)")
+            st.markdown(f'<div class="sidebar-section-header" style="margin-top: 1.5rem;">{intent_label}</div>', unsafe_allow_html=True)
+            
+            # Default intent based on combination
+            if crawler in ["ai", "unified"]:
+                default_intent = "Extract custom projects with pricing information. Include case studies and service offerings."
+            elif scraper == "lam":
+                default_intent = "Extract all products with customization options and prices. Ignore blogs and marketing pages."
+            else:
+                default_intent = "Extract products with detailed specifications and pricing."
+            
+            user_intent = st.text_area(
+                "User Intent",
+                value=default_intent,
+                height=100,
+                label_visibility="collapsed",
+                help="Describe what you want to extract. Be specific about what to include and exclude."
+            )
+            
+            if intent_required:
+                st.caption("🔍 AI/Unified crawler requires intent to filter pages")
+            if crawler in ["ai", "unified"]:
+                st.caption("💡 Examples: 'Extract RV projects', 'Find luxury homes with pricing', 'Collect industrial case studies'")
+            elif scraper == "lam":
+                st.caption("💡 Be specific: mention what to extract and what to ignore")
 
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">🎯 Scraping Strictness</div>', unsafe_allow_html=True)
         
@@ -853,6 +923,12 @@ with st.sidebar:
         max_pages = st.slider("Max Pages", 10, 300, 25, 10)
         max_depth = st.slider("Max Depth", 1, 5, 3)
         delay = st.slider("Delay", 0.1, 5.0, 0.5, 0.1, format="%.1fs")
+        
+        use_cache = st.checkbox(
+            "Enable HTTP Cache",
+            value=True,
+            help="Cache HTTP responses to avoid re-fetching the same URLs. Disable for fresh data."
+        )
 
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">📄 Export Format</div>', unsafe_allow_html=True)
         st.caption("JSON export is enabled by default")
@@ -992,7 +1068,11 @@ if run_button:
         "crawl_delay": delay,
         "export_formats": export_formats,
         "strictness": strictness,
-        "model": model,
+        "crawler": crawler,
+        "scraper": scraper,
+        "force_ai": force_ai,
+        "use_cache": use_cache,
+        "intent": user_intent,
         "google_sheets_upload": enable_sheets,
         "google_sheets_id": sheets_id
     }
