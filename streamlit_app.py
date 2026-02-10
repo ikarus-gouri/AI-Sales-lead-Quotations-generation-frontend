@@ -88,7 +88,7 @@ with st.sidebar:
     
     recommend_intent = st.text_area(
         "What do you want to extract?",
-        value="Extract the product information, price and customizations",
+        value="extract product information, price and customization",
         height=80,
         help="Describe your extraction goal in natural language"
     )
@@ -239,13 +239,13 @@ with st.sidebar:
             
             # Default intent based on combination
             if crawler in ["ai", "unified"]:
-                default_intent = "Extract the product information, price and customizations"
+                default_intent = "extract product information, price and customization"
             elif scraper == "auto":
-                default_intent = "Extract the product information, price and customizations"
+                default_intent = "extract product information, price and customization"
             elif scraper == "lam":
-                default_intent = "Extract the product information, price and customizations"
+                default_intent = "extract product information, price and customization"
             else:
-                default_intent = "Extract the product information, price and customizations"
+                default_intent = "extract product information, price and customization"
             
             user_intent = st.text_area(
                 "User Intent",
