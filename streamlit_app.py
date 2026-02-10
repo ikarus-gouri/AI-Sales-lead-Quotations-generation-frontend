@@ -88,7 +88,7 @@ with st.sidebar:
     
     recommend_intent = st.text_area(
         "What do you want to extract?",
-        placeholder="Extract products with pricing information...",
+        value="Extract the product information, price and customizations",
         height=80,
         help="Describe your extraction goal in natural language"
     )
@@ -173,12 +173,12 @@ with st.sidebar:
         crawler = crawler_options[crawler_display]
         
         # Crawler descriptions
-        crawler_descriptions = {
-            "Web Crawler": "🌐 Traditional: Crawls pages and classifies using rule-based signals (fast, reliable for standard sites)",
-            "AI Crawler (Legacy)": "🤖 Legacy AI: Uses Jina + Gemini for page classification (requires Jina API)",
-            "Unified Crawler (Recommended)": "✨ Best Choice: Discovers all URLs then uses Gemini to filter by intent (no Jina required, more reliable)"
-        }
-        st.info(crawler_descriptions[crawler_display])
+        # crawler_descriptions = {
+        #     "Web Crawler": "🌐 Traditional: Crawls pages and classifies using rule-based signals (fast, reliable for standard sites)",
+        #     "AI Crawler (Legacy)": "🤖 Legacy AI: Uses Jina + Gemini for page classification (requires Jina API)",
+        #     "Unified Crawler (Recommended)": "✨ Best Choice: Discovers all URLs then uses Gemini to filter by intent (no Jina required, more reliable)"
+        # }
+        # st.info(crawler_descriptions[crawler_display])
         
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">⚙️ Scraper Selection</div>', unsafe_allow_html=True)
         
@@ -192,7 +192,7 @@ with st.sidebar:
         scraper_display = st.radio(
             "Scraper Type",
             options=list(scraper_options.keys()),
-            index=0,  # Default to Static
+            index=3,  # Default to Auto
             label_visibility="collapsed",
             help="Static: Fast HTML parsing\nLAM: Gemini-guided interactive extraction for configurators\nAI: AI-powered semantic extraction\nAuto: Intelligent routing based on content type"
         )
@@ -239,13 +239,13 @@ with st.sidebar:
             
             # Default intent based on combination
             if crawler in ["ai", "unified"]:
-                default_intent = "Extract custom projects with pricing information. Include case studies and service offerings."
+                default_intent = "Extract the product information, price and customizations"
             elif scraper == "auto":
-                default_intent = "Extract all products with customization options and prices. Route configurators to LAM, standard pages to Static, and vague content to AI."
+                default_intent = "Extract the product information, price and customizations"
             elif scraper == "lam":
-                default_intent = "Extract all products with customization options and prices. Ignore blogs and marketing pages."
+                default_intent = "Extract the product information, price and customizations"
             else:
-                default_intent = "Extract products with detailed specifications and pricing."
+                default_intent = "Extract the product information, price and customizations"
             
             user_intent = st.text_area(
                 "User Intent",
