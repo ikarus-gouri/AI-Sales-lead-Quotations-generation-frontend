@@ -15,685 +15,6 @@ st.set_page_config(
 )
 
 # -----------------------------
-# Custom CSS for Modern UI
-# -----------------------------
-# st.markdown("""
-# <style>
-#     /* Import Fonts */
-#     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
-#     /* Global Styles */
-#     * {
-#         font-family: 'Inter', sans-serif;
-#     }
-    
-#     /* Hide Streamlit Branding */
-#     #MainMenu {visibility: hidden;}
-#     footer {visibility: hidden;}
-#     header {visibility: hidden;}
-    
-#     /* Force Light Theme */
-#     .stApp {
-#         background: #f8f9fa !important;
-#     }
-    
-#     /* Main Container */
-#     .main {
-#         background: #f8f9fa !important;
-#         padding: 0;
-#     }
-    
-#     .block-container {
-#         padding-top: 2rem;
-#         background: #f8f9fa !important;
-#     }
-    
-#     /* Ensure all containers are light */
-#     [data-testid="stAppViewContainer"] {
-#         background: #f8f9fa !important;
-#     }
-    
-#     [data-testid="stHeader"] {
-#         background: transparent !important;
-#     }
-    
-#     section[data-testid="stSidebar"] > div {
-#         background: white !important;
-#     }
-    
-#     /* Header Styling */
-#     .header-container {
-#         background: white;
-#         padding: 1.5rem 2rem;
-#         border-bottom: 1px solid #e5e7eb;
-#         margin: -1rem -1rem 2rem -1rem;
-#         display: flex;
-#         align-items: center;
-#         justify-content: space-between;
-#     }
-    
-#     .header-title {
-#         display: flex;
-#         align-items: center;
-#         gap: 0.75rem;
-#     }
-    
-#     .header-icon {
-#         width: 32px;
-#         height: 32px;
-#         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-#         border-radius: 8px;
-#         display: flex;
-#         align-items: center;
-#         justify-content: center;
-#         color: white;
-#         font-size: 18px;
-#     }
-    
-#     .header-text h1 {
-#         font-size: 1.25rem;
-#         font-weight: 600;
-#         color: #111827;
-#         margin: 0;
-#         line-height: 1.2;
-#     }
-    
-#     .header-text p {
-#         font-size: 0.75rem;
-#         color: #6b7280;
-#         margin: 0;
-#         font-weight: 400;
-#     }
-    
-#     .backend-status {
-#         display: flex;
-#         align-items: center;
-#         gap: 0.5rem;
-#         font-size: 0.875rem;
-#         color: #059669;
-#         font-weight: 500;
-#     }
-    
-#     .status-dot {
-#         width: 8px;
-#         height: 8px;
-#         background: #10b981;
-#         border-radius: 50%;
-#         animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-#     }
-    
-#     @keyframes pulse {
-#         0%, 100% {
-#             opacity: 1;
-#         }
-#         50% {
-#             opacity: 0.5;
-#         }
-#     }
-    
-#     /* Sidebar Styles */
-#     [data-testid="stSidebar"] {
-#         background: white;
-#         padding: 1.5rem 1rem;
-#     }
-    
-#     [data-testid="stSidebar"] > div:first-child {
-#         background: white;
-#     }
-    
-#     /* Section Headers in Sidebar */
-#     .sidebar-section {
-#         margin-bottom: 1.5rem;
-#     }
-    
-#     .sidebar-section-header {
-#         font-size: 0.75rem;
-#         font-weight: 600;
-#         color: #6b7280;
-#         text-transform: uppercase;
-#         letter-spacing: 0.05em;
-#         margin-bottom: 0.75rem;
-#         display: flex;
-#         align-items: center;
-#         gap: 0.5rem;
-#     }
-    
-#     /* Input Labels */
-#     .stTextInput > label,
-#     .stSelectbox > label,
-#     .stSlider > label,
-#     .stRadio > label,
-#     .stCheckbox > label,
-#     .stMultiSelect > label {
-#         color: #374151 !important;
-#         font-weight: 500;
-#         font-size: 0.875rem;
-#     }
-    
-#     /* Input Styling */
-#     .stTextInput > div > div > input {
-#         border: 1px solid #e5e7eb;
-#         border-radius: 8px;
-#         padding: 0.625rem 0.875rem;
-#         font-size: 0.875rem;
-#         background: #f9fafb;
-#         transition: all 0.2s;
-#         color: #111827;
-#     }
-    
-#     .stTextInput > div > div > input::placeholder {
-#         color: #9ca3af;
-#     }
-    
-#     .stTextInput > div > div > input:focus {
-#         border-color: #3b82f6;
-#         background: white;
-#         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-#     }
-    
-#     /* Ensure all text is dark and visible */
-#     p, span, div, label {
-#         color: #374151;
-#     }
-    
-#     .stMarkdown p {
-#         color: #374151;
-#     }
-    
-#     /* Caption text */
-#     .stCaption {
-#         color: #6b7280 !important;
-#     }
-    
-#     /* Select Box Styling */
-#     .stSelectbox > div > div {
-#         border: 1px solid #e5e7eb;
-#         border-radius: 8px;
-#         background: #f9fafb;
-#         color: #111827;
-#     }
-    
-#     .stSelectbox [data-baseweb="select"] {
-#         color: #111827;
-#     }
-    
-#     /* Slider Styling */
-#     .stSlider > div > div > div {
-#         background: #e5e7eb;
-#     }
-    
-#     .stSlider > div > div > div > div {
-#         background: #3b82f6;
-#     }
-    
-#     .stSlider label {
-#         color: #374151 !important;
-#     }
-    
-#     .stSlider [data-testid="stTickBarMin"],
-#     .stSlider [data-testid="stTickBarMax"] {
-#         color: #6b7280 !important;
-#     }
-    
-#     /* Radio Button Styling */
-#     .stRadio > div {
-#         gap: 0.5rem;
-#     }
-    
-#     .stRadio > div > label {
-#         background: white;
-#         border: 2px solid #e5e7eb;
-#         border-radius: 8px;
-#         padding: 0.75rem 1rem;
-#         cursor: pointer;
-#         transition: all 0.2s;
-#         display: flex;
-#         align-items: center;
-#         gap: 0.5rem;
-#         color: #374151 !important;
-#     }
-    
-#     .stRadio > div > label > div {
-#         color: #374151 !important;
-#     }
-    
-#     .stRadio > div > label:hover {
-#         border-color: #3b82f6;
-#         background: #f0f9ff;
-#     }
-    
-#     .stRadio > div > label[data-checked="true"] {
-#         border-color: #3b82f6;
-#         background: #eff6ff;
-#     }
-    
-#     /* Radio button labels */
-#     .stRadio label p {
-#         color: #374151 !important;
-#         margin: 0;
-#     }
-    
-#     /* Checkbox Styling */
-#     .stCheckbox {
-#         padding: 0.5rem 0;
-#     }
-    
-#     .stCheckbox label {
-#         color: #374151 !important;
-#     }
-    
-#     .stCheckbox label span {
-#         color: #374151 !important;
-#     }
-    
-#     .stCheckbox label p {
-#         color: #374151 !important;
-#     }
-    
-#     /* Info/Warning Boxes */
-#     .stAlert {
-#         border-radius: 8px;
-#         border: none;
-#         padding: 0.75rem 1rem;
-#         font-size: 0.875rem;
-#     }
-    
-#     .stAlert p {
-#         color: #374151 !important;
-#     }
-    
-#     .stAlert [data-testid="stMarkdownContainer"] p {
-#         color: #374151 !important;
-#     }
-    
-#     /* Button Styling */
-#     .stButton > button {
-#         width: 100%;
-#         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-#         color: white;
-#         border: none;
-#         border-radius: 8px;
-#         padding: 0.75rem 1.5rem;
-#         font-weight: 600;
-#         font-size: 0.875rem;
-#         transition: all 0.2s;
-#         box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-#     }
-    
-#     .stButton > button:hover {
-#         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-#         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-#         transform: translateY(-1px);
-#     }
-    
-#     .stButton > button:active {
-#         transform: translateY(0);
-#     }
-    
-#     /* Download Button */
-#     .stDownloadButton > button {
-#         width: 100%;
-#         background: white;
-#         color: #374151;
-#         border: 1px solid #e5e7eb;
-#         border-radius: 8px;
-#         padding: 0.75rem 1rem;
-#         font-weight: 500;
-#         font-size: 0.875rem;
-#         transition: all 0.2s;
-#     }
-    
-#     .stDownloadButton > button:hover {
-#         background: #f9fafb;
-#         border-color: #d1d5db;
-#     }
-    
-#     # /* Progress Bar */
-#     # .stProgress > div > div {
-#     #     background: #e5e7eb;
-#     #     border-radius: 9999px;
-#     #     height: 8px;
-#     # }
-    
-#     # .stProgress > div > div > div {
-#     #     background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
-#     #     border-radius: 9999px;
-#     # }
-    
-#     /* Metrics */
-#     [data-testid="stMetricValue"] {
-#         font-size: 1.875rem;
-#         font-weight: 700;
-#         color: #111827;
-#     }
-    
-#     [data-testid="stMetricLabel"] {
-#         font-size: 0.875rem;
-#         font-weight: 500;
-#         color: #6b7280;
-#     }
-    
-#     /* Card Styling */
-#     .status-card {
-#         background: white;
-#         border: 1px solid #e5e7eb;
-#         border-radius: 12px;
-#         padding: 1.5rem;
-#         margin-bottom: 1.5rem;
-#         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-#     }
-    
-#     .metric-card {
-#         background: white;
-#         border: 1px solid #e5e7eb;
-#         border-radius: 12px;
-#         padding: 1.25rem;
-#         text-align: center;
-#         transition: all 0.2s;
-#     }
-    
-#     .metric-card:hover {
-#         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-#         transform: translateY(-2px);
-#     }
-    
-#     .metric-icon {
-#         width: 48px;
-#         height: 48px;
-#         background: #eff6ff;
-#         border-radius: 12px;
-#         display: flex;
-#         align-items: center;
-#         justify-content: center;
-#         margin: 0 auto 1rem auto;
-#         color: #3b82f6;
-#         font-size: 24px;
-#     }
-    
-#     .metric-value {
-#         font-size: 2rem;
-#         font-weight: 700;
-#         color: #111827;
-#         margin-bottom: 0.25rem;
-#     }
-    
-#     .metric-label {
-#         font-size: 0.875rem;
-#         color: #6b7280;
-#         font-weight: 500;
-#     }
-    
-#     /* Empty State */
-#     .empty-state {
-#         text-align: center;
-#         padding: 4rem 2rem;
-#         background: white;
-#         border-radius: 12px;
-#         margin: 2rem;
-#         border: 1px solid #e5e7eb;
-#     }
-    
-#     .empty-state-icon {
-#         width: 80px;
-#         height: 80px;
-#         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-#         border-radius: 20px;
-#         display: flex;
-#         align-items: center;
-#         justify-content: center;
-#         margin: 0 auto 1.5rem auto;
-#         color: white;
-#         font-size: 40px;
-#     }
-    
-#     .empty-state-title {
-#         font-size: 1.5rem;
-#         font-weight: 700;
-#         color: #111827;
-#         margin-bottom: 0.5rem;
-#     }
-    
-#     .empty-state-description {
-#         font-size: 1rem;
-#         color: #6b7280;
-#         max-width: 500px;
-#         margin: 0 auto;
-#         line-height: 1.5;
-#     }
-    
-#     .empty-state-link {
-#         color: #3b82f6;
-#         text-decoration: none;
-#         font-weight: 500;
-#         display: inline-flex;
-#         align-items: center;
-#         gap: 0.5rem;
-#         margin-top: 1rem;
-#         transition: all 0.2s;
-#     }
-    
-#     .empty-state-link:hover {
-#         color: #2563eb;
-#     }
-    
-#     /* Job Status Card */
-#     .job-status-header {
-#         display: flex;
-#         justify-content: space-between;
-#         align-items: center;
-#         margin-bottom: 1rem;
-#     }
-    
-#     .job-status-title {
-#         font-size: 1.125rem;
-#         font-weight: 600;
-#         color: #111827;
-#     }
-    
-#     .job-status-badge {
-#         display: inline-flex;
-#         align-items: center;
-#         gap: 0.5rem;
-#         padding: 0.375rem 0.75rem;
-#         background: #eff6ff;
-#         color: #2563eb;
-#         border-radius: 9999px;
-#         font-size: 0.875rem;
-#         font-weight: 500;
-#     }
-    
-#     .job-status-badge.completed {
-#         background: #d1fae5;
-#         color: #059669;
-#     }
-    
-#     .progress-section {
-#         margin: 1.5rem 0;
-#     }
-    
-#     .progress-label {
-#         display: flex;
-#         justify-content: space-between;
-#         align-items: center;
-#         margin-bottom: 0.5rem;
-#         font-size: 0.875rem;
-#         color: #6b7280;
-#     }
-    
-#     .progress-percentage {
-#         font-weight: 600;
-#         color: #111827;
-#     }
-    
-#     .activity-section {
-#         background: #f9fafb;
-#         border-radius: 8px;
-#         padding: 1rem;
-#         margin-top: 1rem;
-#     }
-    
-#     .activity-title {
-#         font-size: 0.75rem;
-#         font-weight: 600;
-#         color: #6b7280;
-#         text-transform: uppercase;
-#         letter-spacing: 0.05em;
-#         margin-bottom: 0.5rem;
-#     }
-    
-#     .activity-text {
-#         font-size: 0.875rem;
-#         color: #111827;
-#         display: flex;
-#         align-items: center;
-#         gap: 0.5rem;
-#     }
-    
-#     /* Results Section */
-#     .results-header {
-#         display: flex;
-#         align-items: center;
-#         gap: 0.75rem;
-#         margin-bottom: 1.5rem;
-#     }
-    
-#     .results-icon {
-#         width: 40px;
-#         height: 40px;
-#         background: #d1fae5;
-#         border-radius: 10px;
-#         display: flex;
-#         align-items: center;
-#         justify-content: center;
-#         color: #059669;
-#         font-size: 20px;
-#     }
-    
-#     .results-title {
-#         font-size: 1.125rem;
-#         font-weight: 600;
-#         color: #111827;
-#     }
-    
-#     .results-subtitle {
-#         font-size: 0.875rem;
-#         color: #6b7280;
-#     }
-    
-#     .download-item {
-#         background: white;
-#         border: 1px solid #e5e7eb;
-#         border-radius: 8px;
-#         padding: 1rem;
-#         margin-bottom: 0.75rem;
-#         display: flex;
-#         align-items: center;
-#         justify-content: space-between;
-#         transition: all 0.2s;
-#     }
-    
-#     .download-item:hover {
-#         border-color: #3b82f6;
-#         background: #f9fafb;
-#     }
-    
-#     .download-info {
-#         display: flex;
-#         align-items: center;
-#         gap: 0.75rem;
-#     }
-    
-#     .download-icon {
-#         width: 40px;
-#         height: 40px;
-#         background: #eff6ff;
-#         border-radius: 8px;
-#         display: flex;
-#         align-items: center;
-#         justify-content: center;
-#         color: #3b82f6;
-#         font-size: 18px;
-#     }
-    
-#     .download-details {
-#         flex: 1;
-#     }
-    
-#     .download-title {
-#         font-size: 0.875rem;
-#         font-weight: 600;
-#         color: #111827;
-#         margin-bottom: 0.125rem;
-#     }
-    
-#     .download-meta {
-#         font-size: 0.75rem;
-#         color: #6b7280;
-#     }
-    
-#     /* Multiselect Pills */
-#     .stMultiSelect [data-baseweb="tag"] {
-#         background: #eff6ff;
-#         border: 1px solid #3b82f6;
-#         border-radius: 6px;
-#         color: #2563eb;
-#         font-weight: 500;
-#     }
-    
-#     .stMultiSelect input {
-#         color: #111827 !important;
-#     }
-    
-#     .stMultiSelect [data-baseweb="select"] {
-#         color: #111827;
-#     }
-    
-#     /* Form Labels - ensure all are dark */
-#     label {
-#         color: #374151 !important;
-#     }
-    
-#     /* Streamlit native text */
-#     .stMarkdown {
-#         color: #374151;
-#     }
-    
-#     /* Form Submit Button Override */
-#     .stFormSubmitButton > button {
-#         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-#         color: white;
-#         font-weight: 600;
-#     }
-    
-#     /* Spacing Utilities */
-#     .mb-1 { margin-bottom: 0.5rem; }
-#     .mb-2 { margin-bottom: 1rem; }
-#     .mb-3 { margin-bottom: 1.5rem; }
-#     .mt-1 { margin-top: 0.5rem; }
-#     .mt-2 { margin-top: 1rem; }
-#     .mt-3 { margin-top: 1.5rem; }
-    
-#     /* Override any dark theme */
-#     body {
-#         background-color: #f8f9fa !important;
-#     }
-    
-#     .main > div {
-#         background-color: #f8f9fa !important;
-#     }
-    
-#     /* Ensure no dark backgrounds anywhere */
-#     div[data-testid="stVerticalBlock"] {
-#         background-color: transparent !important;
-#     }
-    
-#     div[data-testid="stHorizontalBlock"] {
-#         background-color: transparent !important;
-#     }
-# </style>
-# """, unsafe_allow_html=True)
-
-# -----------------------------
 # Header
 # -----------------------------
 st.markdown("""
@@ -717,6 +38,7 @@ st.markdown("""
 BACKEND_OPTIONS = {
     "Local": "http://localhost:7860",
     "LAM Sales": "https://gouriikarus3d-lam-sales.hf.space",
+    "Catalogue AI": "https://gouriikarus3d-catalog-ai.hf.space/"
     # "Product Catalogue AI": "https://gouriikarus3d-product-catalogue-ai.hf.space"
 }
 
@@ -753,15 +75,48 @@ if 'backend_url' not in st.session_state:
 # Sidebar – Scraper Settings
 # -----------------------------
 with st.sidebar:
+    st.markdown('<div class="sidebar-section-header">🌐 Website URL</div>', unsafe_allow_html=True)
+    url = st.text_input(
+        "Target Website URL",
+        placeholder="https://example.com/products",
+        label_visibility="collapsed"
+    )
+    
+    # AI Recommendation Section - Always Visible - OUTSIDE FORM
+    st.markdown('<div style="margin-top: 1rem;"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-section-header">🧠 AI Recommendation</div>', unsafe_allow_html=True)
+    
+    recommend_intent = st.text_area(
+        "What do you want to extract?",
+        placeholder="Extract products with pricing information...",
+        height=80,
+        help="Describe your extraction goal in natural language"
+    )
+    
+    get_recommendation_btn = st.button(
+        "🚀 Get AI Recommendation",
+        use_container_width=True,
+        help="Let Gemini analyze the site and recommend optimal crawler/scraper combination"
+    )
+    
+    if get_recommendation_btn:
+        if url and recommend_intent:
+            st.info("💡 AI will analyze the site and suggest the best strategy")
+        elif not url:
+            st.warning("⚠️ Please enter a website URL first")
+        elif not recommend_intent:
+            st.warning("⚠️ Please describe what you want to extract")
+    
+    st.markdown('<div style="margin-top: 1.5rem;"></div>', unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown('<div style="margin-top: 1.5rem;"></div>', unsafe_allow_html=True)
+    
+    # Manual Configuration - INSIDE FORM
     with st.form("scraper_form"):
-        st.markdown('<div class="sidebar-section-header">🌐 Website URL</div>', unsafe_allow_html=True)
-        url = st.text_input(
-            "Target Website URL",
-            placeholder="https://example.com/products",
-            label_visibility="collapsed"
-        )
-
-        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">⚙️ Backend Selection</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-section-header">⚙️ Manual Configuration</div>', unsafe_allow_html=True)
+        st.markdown('<div style="margin-top: 1rem;"></div>', unsafe_allow_html=True)
+        
+        st.markdown('<div class="sidebar-section-header">⚙️ Backend Selection</div>', unsafe_allow_html=True)
         
         # Determine current index for the radio button
         current_index = 0
@@ -830,7 +185,8 @@ with st.sidebar:
         scraper_options = {
             "Static (HTML Parsing)": "static",
             "LAM (Gemini + Playwright)": "lam",
-            "AI (AI Extraction)": "ai"
+            "AI (AI Extraction)": "ai",
+            "Auto (Intelligent Routing)": "auto"
         }
         
         scraper_display = st.radio(
@@ -838,7 +194,7 @@ with st.sidebar:
             options=list(scraper_options.keys()),
             index=0,  # Default to Static
             label_visibility="collapsed",
-            help="Static: Fast HTML parsing\nLAM: Gemini-guided interactive extraction for configurators\nAI: AI-powered semantic extraction"
+            help="Static: Fast HTML parsing\nLAM: Gemini-guided interactive extraction for configurators\nAI: AI-powered semantic extraction\nAuto: Intelligent routing based on content type"
         )
         scraper = scraper_options[scraper_display]
         
@@ -846,7 +202,8 @@ with st.sidebar:
         scraper_descriptions = {
             "Static (HTML Parsing)": "⚡ Fast: Extracts data from HTML using Jina AI (works on most sites)",
             "LAM (Gemini + Playwright)": "🎯 Interactive: Uses Gemini + Playwright to navigate configurators and extract variants",
-            "AI (AI Extraction)": "🧠 Semantic: AI-powered extraction with deep content understanding"
+            "AI (AI Extraction)": "🧠 Semantic: AI-powered extraction with deep content understanding",
+            "Auto (Intelligent Routing)": "🤖 Smart: Analyzes each URL and routes to optimal scraper (LAM/Static/AI) automatically"
         }
         st.info(scraper_descriptions[scraper_display])
         
@@ -861,9 +218,19 @@ with st.sidebar:
             if force_ai:
                 st.caption("⚡ AI-only mode: No fallback to static extraction")
         
-        # User Intent (REQUIRED for AI/unified crawler, optional for LAM/AI scraper)
+        # Result Optimization
+        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">🎯 Post-Processing</div>', unsafe_allow_html=True)
+        optimize_results = st.checkbox(
+            "Optimize Results",
+            value=True,
+            help="Use AI to remove duplicates and filter out invalid entries (questions, FAQs, generic text)"
+        )
+        if optimize_results:
+            st.caption("✨ AI will clean results before export")
+        
+        # User Intent (REQUIRED for AI/unified crawler or auto scraper, optional for LAM/AI scraper)
         user_intent = None
-        intent_required = crawler in ["ai", "unified"]
+        intent_required = crawler in ["ai", "unified"] or scraper == "auto"
         intent_recommended = scraper in ["lam", "ai"]
         
         if intent_required or intent_recommended:
@@ -873,6 +240,8 @@ with st.sidebar:
             # Default intent based on combination
             if crawler in ["ai", "unified"]:
                 default_intent = "Extract custom projects with pricing information. Include case studies and service offerings."
+            elif scraper == "auto":
+                default_intent = "Extract all products with customization options and prices. Route configurators to LAM, standard pages to Static, and vague content to AI."
             elif scraper == "lam":
                 default_intent = "Extract all products with customization options and prices. Ignore blogs and marketing pages."
             else:
@@ -887,9 +256,14 @@ with st.sidebar:
             )
             
             if intent_required:
-                st.caption("🔍 AI/Unified crawler requires intent to filter pages")
+                if scraper == "auto":
+                    st.caption("🔍 Auto scraper requires intent for intelligent routing")
+                else:
+                    st.caption("🔍 AI/Unified crawler requires intent to filter pages")
             if crawler in ["ai", "unified"]:
                 st.caption("💡 Examples: 'Extract RV projects', 'Find luxury homes with pricing', 'Collect industrial case studies'")
+            elif scraper == "auto":
+                st.caption("💡 Describe what to extract - the system will route each URL to the best scraper")
             elif scraper == "lam":
                 st.caption("💡 Be specific: mention what to extract and what to ignore")
 
@@ -923,12 +297,6 @@ with st.sidebar:
         max_pages = st.slider("Max Pages", 10, 300, 25, 10)
         max_depth = st.slider("Max Depth", 1, 5, 3)
         delay = st.slider("Delay", 0.1, 5.0, 0.5, 0.1, format="%.1fs")
-        
-        use_cache = st.checkbox(
-            "Enable HTTP Cache",
-            value=True,
-            help="Cache HTTP responses to avoid re-fetching the same URLs. Disable for fresh data."
-        )
 
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">📄 Export Format</div>', unsafe_allow_html=True)
         st.caption("JSON export is enabled by default")
@@ -988,6 +356,16 @@ class HFAPIClient:
         r = self.session.post(
             f"{self.base_url}/google-sheets/upload",
             json=payload,
+            timeout=30
+        )
+        r.raise_for_status()
+        return r.json()
+    
+    def recommend(self, url: str, intent: str):
+        """Get AI-powered recommendation from master.py"""
+        r = self.session.post(
+            f"{self.base_url}/recommend",
+            json={"url": url, "intent": intent},
             timeout=30
         )
         r.raise_for_status()
@@ -1060,6 +438,66 @@ if run_button:
         except Exception as e:
             st.error(f"❌ Backend unavailable: {str(e)}")
             st.stop()
+    
+    # Step 0: Get AI Recommendation (if enabled)
+    if get_recommendation and recommend_intent:
+        st.info("🧠 Getting AI-powered recommendation from Master Flow Recommender...")
+        
+        try:
+            # Call /recommend endpoint
+            recommend_payload = {
+                "url": url,
+                "intent": recommend_intent
+            }
+            
+            response = api.session.post(
+                f"{api.base_url}/recommend",
+                json=recommend_payload,
+                timeout=30
+            )
+            response.raise_for_status()
+            recommendation_result = response.json()
+            
+            if recommendation_result.get("success"):
+                rec = recommendation_result.get("recommendation", {})
+                
+                # Display recommendation
+                st.success("✅ Recommendation received!")
+                
+                with st.expander("📋 View AI Recommendation", expanded=True):
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("Crawler", rec.get("crawler", "N/A").upper())
+                    with col2:
+                        st.metric("Scraper", rec.get("scraper", "N/A").upper())
+                    with col3:
+                        st.metric("Strictness", rec.get("strictness", "N/A").upper())
+                    
+                    if rec.get("reasoning"):
+                        st.markdown("**Reasoning:**")
+                        for key, value in rec.get("reasoning", {}).items():
+                            st.markdown(f"- **{key}**: {value}")
+                
+                # Apply recommendation
+                crawler = rec.get("crawler", crawler)
+                scraper = rec.get("scraper", scraper)
+                strictness = rec.get("strictness", strictness)
+                user_intent = recommend_intent  # Use the recommendation intent
+                
+                # Apply exploration config if available
+                exploration_config = rec.get("exploration_config", {})
+                if exploration_config.get("max_pages"):
+                    max_pages = exploration_config.get("max_pages", max_pages)
+                if exploration_config.get("max_depth"):
+                    max_depth = exploration_config.get("max_depth", max_depth)
+                
+                st.info(f"🚀 Proceeding with recommended configuration: {crawler} crawler + {scraper} scraper")
+            else:
+                st.warning("⚠️ Could not get recommendation, using manual configuration")
+        
+        except Exception as e:
+            st.warning(f"⚠️ Recommendation failed: {str(e)}")
+            st.info("Proceeding with manual configuration...")
 
     payload = {
         "url": url,
@@ -1071,8 +509,8 @@ if run_button:
         "crawler": crawler,
         "scraper": scraper,
         "force_ai": force_ai,
-        "use_cache": use_cache,
         "intent": user_intent,
+        "optimize": optimize_results,
         "google_sheets_upload": enable_sheets,
         "google_sheets_id": sheets_id
     }
