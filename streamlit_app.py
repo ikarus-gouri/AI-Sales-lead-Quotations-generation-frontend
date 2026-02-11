@@ -669,7 +669,7 @@ if st.session_state.scraping_started and st.session_state.job_id:
             
             # Show Google Sheets link if enabled
             if enable_sheets:
-                st.markdown("[📊 View in Google Sheets](https://docs.google.com/spreadsheets/d/1SrD1nYSuHEIF8i8n8Xs3mg3f8KviYgm0TbYC1AbhquQ/edit?gid=0#gid=0)")
+                st.markdown("[📊 View in Google Sheets](https://docs.google.com/spreadsheets/d/1E4sdMjLhuH4E5DO8QwvaHfajIzq5tBOVH4PQDG0bj2g/edit?gid=0#gid=0)")
                 st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
 
             # Download Files
