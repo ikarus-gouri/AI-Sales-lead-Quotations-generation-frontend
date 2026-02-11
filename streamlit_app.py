@@ -440,7 +440,7 @@ if run_button:
             st.stop()
     
     # Step 0: Get AI Recommendation (if enabled)
-    if get_recommendation and recommend_intent:
+    if get_recommendation_btn and recommend_intent:
         st.info("🧠 Getting AI-powered recommendation from Master Flow Recommender...")
         
         try:
