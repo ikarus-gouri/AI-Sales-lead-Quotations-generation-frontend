@@ -38,7 +38,6 @@ st.markdown("""
 BACKEND_OPTIONS = {
     "Local": "http://localhost:7860",
     "LAM Sales": "https://gouriikarus3d-lam-sales.hf.space",
-    "Catalogue AI": "https://gouriikarus3d-catalog-ai.hf.space/"
     # "Product Catalogue AI": "https://gouriikarus3d-product-catalogue-ai.hf.space"
 }
 
@@ -75,48 +74,36 @@ if 'backend_url' not in st.session_state:
 # Sidebar – Scraper Settings
 # -----------------------------
 with st.sidebar:
-    st.markdown('<div class="sidebar-section-header">🌐 Website URL</div>', unsafe_allow_html=True)
-    url = st.text_input(
-        "Target Website URL",
-        placeholder="https://example.com/products",
-        label_visibility="collapsed"
-    )
-    
-    # AI Recommendation Section - Always Visible - OUTSIDE FORM
-    st.markdown('<div style="margin-top: 1rem;"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-section-header">🧠 AI Recommendation</div>', unsafe_allow_html=True)
-    
-    recommend_intent = st.text_area(
-        "What do you want to extract?",
-        value="extract product information, price and customization",
-        height=80,
-        help="Describe your extraction goal in natural language"
-    )
-    
-    get_recommendation_btn = st.button(
-        "🚀 Get AI Recommendation",
-        use_container_width=True,
-        help="Let Gemini analyze the site and recommend optimal crawler/scraper combination"
-    )
-    
-    if get_recommendation_btn:
-        if url and recommend_intent:
-            st.info("💡 AI will analyze the site and suggest the best strategy")
-        elif not url:
-            st.warning("⚠️ Please enter a website URL first")
-        elif not recommend_intent:
-            st.warning("⚠️ Please describe what you want to extract")
-    
-    st.markdown('<div style="margin-top: 1.5rem;"></div>', unsafe_allow_html=True)
-    st.markdown("---")
-    st.markdown('<div style="margin-top: 1.5rem;"></div>', unsafe_allow_html=True)
-    
-    # Manual Configuration - INSIDE FORM
     with st.form("scraper_form"):
-        st.markdown('<div class="sidebar-section-header">⚙️ Manual Configuration</div>', unsafe_allow_html=True)
-        st.markdown('<div style="margin-top: 1rem;"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-section-header">🌐 Website URL</div>', unsafe_allow_html=True)
+        url = st.text_input(
+            "Target Website URL",
+            placeholder="https://example.com/products",
+            label_visibility="collapsed"
+        )
         
-        st.markdown('<div class="sidebar-section-header">⚙️ Backend Selection</div>', unsafe_allow_html=True)
+        # Master Flow Recommender Button
+        st.markdown('<div style="margin-top: 0.5rem; margin-bottom: 1rem;"></div>', unsafe_allow_html=True)
+        
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            get_recommendation = st.checkbox(
+                "🧠 Get AI Recommendation",
+                help="Let Gemini analyze the site and recommend optimal crawler/scraper combination"
+            )
+        
+        if get_recommendation:
+            st.info("💡 AI will analyze the site and suggest the best strategy before scraping")
+            recommend_intent = st.text_area(
+                "What do you want to extract?",
+                placeholder="Extract products with pricing information...",
+                height=80,
+                help="Describe your extraction goal in natural language"
+            )
+        else:
+            recommend_intent = None
+
+        st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">⚙️ Backend Selection</div>', unsafe_allow_html=True)
         
         # Determine current index for the radio button
         current_index = 0
@@ -173,12 +160,12 @@ with st.sidebar:
         crawler = crawler_options[crawler_display]
         
         # Crawler descriptions
-        # crawler_descriptions = {
-        #     "Web Crawler": "🌐 Traditional: Crawls pages and classifies using rule-based signals (fast, reliable for standard sites)",
-        #     "AI Crawler (Legacy)": "🤖 Legacy AI: Uses Jina + Gemini for page classification (requires Jina API)",
-        #     "Unified Crawler (Recommended)": "✨ Best Choice: Discovers all URLs then uses Gemini to filter by intent (no Jina required, more reliable)"
-        # }
-        # st.info(crawler_descriptions[crawler_display])
+        crawler_descriptions = {
+            "Web Crawler": "🌐 Traditional: Crawls pages and classifies using rule-based signals (fast, reliable for standard sites)",
+            "AI Crawler (Legacy)": "🤖 Legacy AI: Uses Jina + Gemini for page classification (requires Jina API)",
+            "Unified Crawler (Recommended)": "✨ Best Choice: Discovers all URLs then uses Gemini to filter by intent (no Jina required, more reliable)"
+        }
+        st.info(crawler_descriptions[crawler_display])
         
         st.markdown('<div class="sidebar-section-header" style="margin-top: 1.5rem;">⚙️ Scraper Selection</div>', unsafe_allow_html=True)
         
@@ -192,7 +179,7 @@ with st.sidebar:
         scraper_display = st.radio(
             "Scraper Type",
             options=list(scraper_options.keys()),
-            index=3,  # Default to Auto
+            index=0,  # Default to Static
             label_visibility="collapsed",
             help="Static: Fast HTML parsing\nLAM: Gemini-guided interactive extraction for configurators\nAI: AI-powered semantic extraction\nAuto: Intelligent routing based on content type"
         )
@@ -239,13 +226,13 @@ with st.sidebar:
             
             # Default intent based on combination
             if crawler in ["ai", "unified"]:
-                default_intent = "extract product information, price and customization"
+                default_intent = "Extract custom projects with pricing information. Include case studies and service offerings."
             elif scraper == "auto":
-                default_intent = "extract product information, price and customization"
+                default_intent = "Extract all products with customization options and prices. Route configurators to LAM, standard pages to Static, and vague content to AI."
             elif scraper == "lam":
-                default_intent = "extract product information, price and customization"
+                default_intent = "Extract all products with customization options and prices. Ignore blogs and marketing pages."
             else:
-                default_intent = "extract product information, price and customization"
+                default_intent = "Extract products with detailed specifications and pricing."
             
             user_intent = st.text_area(
                 "User Intent",
@@ -440,7 +427,7 @@ if run_button:
             st.stop()
     
     # Step 0: Get AI Recommendation (if enabled)
-    if get_recommendation_btn and recommend_intent:
+    if get_recommendation and recommend_intent:
         st.info("🧠 Getting AI-powered recommendation from Master Flow Recommender...")
         
         try:
@@ -669,7 +656,7 @@ if st.session_state.scraping_started and st.session_state.job_id:
             
             # Show Google Sheets link if enabled
             if enable_sheets:
-                st.markdown("[📊 View in Google Sheets](https://docs.google.com/spreadsheets/d/1E4sdMjLhuH4E5DO8QwvaHfajIzq5tBOVH4PQDG0bj2g/edit?gid=0#gid=0)")
+                st.markdown("[📊 View in Google Sheets](https://docs.google.com/spreadsheets/d/1SrD1nYSuHEIF8i8n8Xs3mg3f8KviYgm0TbYC1AbhquQ/edit?gid=0#gid=0)")
                 st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
 
             # Download Files
